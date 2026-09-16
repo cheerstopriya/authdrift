@@ -50,6 +50,8 @@ authdrift --help
 ```
 
 Version 0.1.0 is a release candidate, not a published PyPI release.
+The distribution name is `authdrift-harness`; the Python import and CLI remain
+`authdrift`. The existing PyPI package named `authdrift` is a different project.
 Source builds require setuptools >= 77, normally supplied by pip's isolated
 build environment. Examples are included in the repository/source distribution.
 The connected editable-install workflow passed on Windows and Ubuntu with Python
