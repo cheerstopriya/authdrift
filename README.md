@@ -49,7 +49,8 @@ python -m pip install -e .
 authdrift --help
 ```
 
-Version 0.1.0 is a release candidate, not a published PyPI release.
+Version 0.1.0 is prepared for release. PyPI publication is pending;
+use the source installation above until publication is confirmed.
 The distribution name is `authdrift-harness`; the Python import and CLI remain
 `authdrift`. The existing PyPI package named `authdrift` is a different project.
 Source builds require setuptools >= 77, normally supplied by pip's isolated

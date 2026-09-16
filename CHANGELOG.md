@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — release candidate (unreleased)
+## 0.1.0 — 2026-09-17
 
 - Synchronous Scenario/factory/reset API and named checkpoint injection.
 - Positive, negative, and mid-flight controls with state confirmation.
