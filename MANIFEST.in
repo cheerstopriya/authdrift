@@ -1,0 +1,8 @@
+include LICENSE README.md CONTRIBUTING.md SECURITY.md CHANGELOG.md
+recursive-include examples *.py *.md
+recursive-include tests *.py
+include benchmarks/run.py
+include research/methodology.md research/threat-model.md research/related-work.md
+include research/external-validation.md research/implementation-status.md
+include release/validation.md
+prune external-specimens
