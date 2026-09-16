@@ -49,9 +49,11 @@ python -m pip install -e .
 authdrift --help
 ```
 
-Version 0.1.0 is a local release candidate, not a published PyPI release.
+Version 0.1.0 is a release candidate, not a published PyPI release.
 Source builds require setuptools >= 77, normally supplied by pip's isolated
 build environment. Examples are included in the repository/source distribution.
+The connected editable-install workflow passed on Windows and Ubuntu with Python
+3.10, 3.12, and 3.13; see [GitHub validation](release/validation.md).
 
 ## Quick start
 
@@ -61,7 +63,7 @@ authdrift run examples/refund/safe.py --repeats 20 --json safe.json
 ```
 
 The controlled vulnerable fixture reports `REVOCATION_ESCAPE` (exit **1**);
-the corrected fixture reports `CLOSED` (exit **0**). Run all three families:
+the corrected fixture reports `CLOSED` (exit **0**).
 
 In AuthDrift's deliberately vulnerable controlled fixtures, all 20/20 runs
 produced `REVOCATION_ESCAPE`; the corresponding corrected fixtures produced
@@ -75,6 +77,8 @@ Measured final summary lines for the refund commands:
 vulnerable: Escapes: 20/20 valid trials (100.0%); total trials: 20
 corrected:  Escapes: 0/20 valid trials (0.0%); total trials: 20
 ```
+
+Run all three families and the tests:
 
 ```sh
 python benchmarks/run.py
