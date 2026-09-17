@@ -77,6 +77,8 @@ def fetch(directory):
     release = api(f'releases/{release_id}')
     if release.get('id') != int(release_id):
         raise ValueError('Release ID mismatch')
+    print(f"Release identity: id={release['id']}, tag={release.get('tag_name')}, "
+          f"draft={release.get('draft')}", flush=True)
     assets = selected_assets(release)
     directory.mkdir(exist_ok=True)
     if list(directory.iterdir()):
