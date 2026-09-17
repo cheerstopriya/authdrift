@@ -22,7 +22,16 @@ def api(path, *, binary=False):
                f'repos/{REPOSITORY}/{path}', '-H',
                'Accept: application/octet-stream' if binary else
                'Accept: application/vnd.github+json']
-    response = subprocess.run(command, check=True, capture_output=True).stdout
+    result = subprocess.run(command, capture_output=True)
+    if result.returncode:
+        # Report only the API's structured error, never headers or credentials.
+        try:
+            error = json.loads(result.stdout)
+        except (ValueError, UnicodeDecodeError):
+            error = {}
+        raise RuntimeError(f"GitHub API {path}: status={error.get('status', 'unknown')}, "
+                           f"message={error.get('message', 'API request failed')}")
+    response = result.stdout
     return response if binary else json.loads(response)
 
 def verify_tag():
