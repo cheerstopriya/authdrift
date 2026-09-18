@@ -1,0 +1,67 @@
+name: Integration report
+description: Share a real AuthDrift integration, including blocked attempts
+title: "[integration] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying AuthDrift on a real workflow. Do not include credentials, personal data, or unsanitized reports.
+  - type: input
+    id: framework
+    attributes:
+      label: Agent framework or runtime
+      placeholder: Custom Python, LangGraph, PydanticAI, CrewAI, queue worker, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: contract
+    attributes:
+      label: Authority contract
+      description: Who grants authority, what invalidates it, and which effect must be blocked?
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Checkpoint and revocation operation
+      description: Where was authority observed, and how was it changed and independently confirmed?
+    validations:
+      required: true
+  - type: textarea
+    id: sink
+    attributes:
+      label: Consequential sink
+      description: What durable state proves whether the effect committed?
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - REVOCATION_ESCAPE
+        - CLOSED
+        - BASELINE_FAILURE
+        - INVALID_EXPERIMENT
+        - BLOCKED_NOT_EXECUTED
+    validations:
+      required: true
+  - type: textarea
+    id: adapter
+    attributes:
+      label: Adapter or instrumentation required
+      description: Describe the smallest changes needed to run the experiment without changing authorization semantics.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Sanitized reproduction details
+      description: Commands, versions, and a link to public code or a sanitized report if available.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I reviewed this report for credentials, personal data, machine paths, and sensitive exception text.
+          required: true

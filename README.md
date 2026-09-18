@@ -1,11 +1,34 @@
 # AuthDrift
 
+[![PyPI](https://img.shields.io/pypi/v/authdrift-harness)](https://pypi.org/project/authdrift-harness/)
+[![Python](https://img.shields.io/pypi/pyversions/authdrift-harness)](https://pypi.org/project/authdrift-harness/)
+[![Tests](https://github.com/cheerstopriya/authdrift/actions/workflows/tests.yml/badge.svg)](https://github.com/cheerstopriya/authdrift/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Can your AI agent still act after you revoke its authority?**
 
-AuthDrift is a developer testing harness for injecting confirmed authority changes
-into running agent trajectories and observing whether consequential effects still
-commit. It reproduces the gap between an earlier approval and a later action.
-It does not enforce policy or protect a running agent.
+AuthDrift is an open-source Python test harness for a specific failure mode:
+authority is valid when an agent observes it, becomes invalid while the same run
+remains alive, and a later tool effect may still commit.
+
+```text
+authority valid -> agent observes -> confirmed revocation -> same run resumes -> did the sink change?
+```
+
+It runs a positive baseline, a pre-revoked negative baseline, and a deterministic
+mid-flight experiment. It confirms revocation from the supplied authority source
+and verifies the final effect using the supplied authoritative sink predicate.
+AuthDrift tests this boundary; it does not enforce policy or sandbox an agent.
+
+**v0.1.0:** no runtime dependencies, Python 3.10+, MIT licensed, with controlled
+refund, delegation, and session examples. The deliberately vulnerable fixtures
+produce 20/20 `REVOCATION_ESCAPE`; the corrected fixtures produce 20/20 `CLOSED`.
+These are controlled fixture results, not external vulnerability discoveries.
+
+[Run the demo](#installation-and-runnable-demo) ·
+[Test your own agent](docs/integrating-your-agent.md) ·
+[Read the methodology](research/methodology.md) ·
+[Report an integration](https://github.com/cheerstopriya/authdrift/issues/new?template=integration-report.yml)
 
 ## A 30-second example
 
@@ -95,18 +118,53 @@ See [release validation](release/validation.md) for measured results and
 exact commands. The fixtures use in-memory effect records, not real payments,
 LLM calls, or durable external services.
 
+## Test your own agent
+
+You do not need to rewrite the agent's decision logic. Build a small scenario
+adapter around one real workflow:
+
+1. Put `authdrift.checkpoint("authority_observed")` after the workflow has
+   observed authority and before the consequential tool effect.
+2. Make `revoke()` change the real authority source.
+3. Make `revoked()` independently read that source and confirm it is invalid.
+4. Make `committed()` read the durable sink that proves whether the effect happened.
+5. Make `run()` wait until the consequential work has completed, then run the
+   positive, negative, and mid-flight experiments.
+
+```python
+return authdrift.Scenario(
+    name="my-agent-revocation",
+    run=run_real_workflow,
+    revoke=revoke_real_authority,
+    revoked=authority_is_really_revoked,
+    committed=durable_effect_exists,
+    trigger="authority_observed",
+)
+```
+
+The current release fits synchronous Python trajectories whose consequential work
+can be joined before `run()` returns. Background queues, separate worker processes,
+async callbacks, and distributed atomicity need explicit integration work and are
+not claimed as built-in support. See the
+[integration guide](docs/integrating-your-agent.md) for the full checklist,
+architecture examples, and an honest fit assessment.
+
 ## How AuthDrift works
 
-```text
-Workflow observes authority
-          |
-Checkpoint pauses continuation
-          |
-Request authority change -> independently confirm state
-          |
-Verify effect is still absent
-          |
-Resume the same workflow -> inspect authoritative sink state
+```mermaid
+sequenceDiagram
+    participant W as Agent workflow
+    participant H as AuthDrift
+    participant A as Authority source
+    participant S as Consequential sink
+    W->>A: Observe valid authority
+    W->>H: Reach deterministic checkpoint
+    H->>A: Change authority
+    H->>A: Independently confirm invalid state
+    H->>S: Confirm effect is still absent
+    H-->>W: Resume the same trajectory
+    W->>S: Attempt consequential effect
+    H->>S: Verify durable state
 ```
 
 Each repetition uses fresh state for positive, pre-revoked negative, and
@@ -224,6 +282,13 @@ authorization, or revocation closure. See [related work](research/related-work.m
 See [CONTRIBUTING.md](CONTRIBUTING.md). Independent specimens are welcome with
 honest execution provenance and explicit authority contracts. For suspected
 harness vulnerabilities, see [SECURITY.md](SECURITY.md).
+
+Early feedback has identified useful next experiments: a queued job that resumes
+after its capability expires, history-derived authority changes such as consumed
+approvals, and two workers racing to consume one capability. These are roadmap
+ideas, not v0.1 capabilities. If you try AuthDrift on a real workflow, use the
+[integration report](https://github.com/cheerstopriya/authdrift/issues/new?template=integration-report.yml)
+to share what worked, what failed, and what adapter you needed.
 
 ## License
 

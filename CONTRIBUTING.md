@@ -13,5 +13,10 @@ Independent specimens must pin source and preserve its license and behavior.
 Record actual prerequisites and outcomes. Never commit credentials or real user
 data. Review deliberately retained release evidence before adding it.
 
+Real integration reports are welcome even when the experiment is blocked. Use the
+integration issue template and include the framework/runtime, authority contract,
+checkpoint, revocation confirmation, authoritative sink, result, and the smallest
+adapter required. Do not alter upstream authorization semantics to force an escape.
+
 Read the [trusted-code and report-privacy boundaries](SECURITY.md#trusted-code-and-report-privacy).
 Keep raw validation and external-specimen evidence private.
