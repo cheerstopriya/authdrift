@@ -35,28 +35,28 @@ The runnable fixtures below explicitly define that contract. In concurrent
 systems the final check and mutation must be atomic with respect to revocation;
 a separate recheck alone does not guarantee that.
 
-## Installation
+## Installation and runnable demo
 
-Python **3.10+**, **no runtime dependencies**. From a source checkout:
+Python **3.10+**, **no runtime dependencies**. Install the public v0.1.0
+package from PyPI and check out the matching tag for the runnable fixtures:
 
 ```sh
-git clone https://github.com/cheerstopriya/authdrift.git
+git clone --depth 1 --branch v0.1.0 https://github.com/cheerstopriya/authdrift.git
 cd authdrift
 python -m venv .venv
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 # macOS/Linux: source .venv/bin/activate
-python -m pip install -e .
+python -m pip install --no-cache-dir authdrift-harness==0.1.0
 authdrift --help
 ```
 
-Version 0.1.0 is prepared for release. PyPI publication is pending;
-use the source installation above until publication is confirmed.
 The distribution name is `authdrift-harness`; the Python import and CLI remain
 `authdrift`. The existing PyPI package named `authdrift` is a different project.
-Source builds require setuptools >= 77, normally supplied by pip's isolated
-build environment. Examples are included in the repository/source distribution.
-The connected editable-install workflow passed on Windows and Ubuntu with Python
-3.10, 3.12, and 3.13; see [GitHub validation](release/validation.md).
+The released wheel and source distribution are available on
+[PyPI](https://pypi.org/project/authdrift-harness/0.1.0/). Examples are included
+in the tagged repository and source distribution. Release validation passed on
+Windows and Ubuntu with Python 3.10, 3.12, and 3.13; see
+[GitHub validation](release/validation.md).
 
 ## Quick start
 
@@ -67,6 +67,9 @@ authdrift run examples/refund/safe.py --repeats 20 --json safe.json
 
 The controlled vulnerable fixture reports `REVOCATION_ESCAPE` (exit **1**);
 the corrected fixture reports `CLOSED` (exit **0**).
+Exit 1 from the first command is the expected detection result, not an
+installation or runner failure. Run the two commands separately rather than
+joining them with `&&`.
 
 In AuthDrift's deliberately vulnerable controlled fixtures, all 20/20 runs
 produced `REVOCATION_ESCAPE`; the corresponding corrected fixtures produced
