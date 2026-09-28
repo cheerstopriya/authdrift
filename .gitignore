@@ -9,6 +9,7 @@ authdrift-results.json
 /safe-check.json
 /vulnerable.json
 /benchmarks/results.json
+/results/
 .env
 .env.*
 !.env.example

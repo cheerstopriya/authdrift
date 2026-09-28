@@ -34,6 +34,9 @@ These are controlled fixture results, not external vulnerability discoveries.
 
 ### Start here
 
+For a complete developer walkthrough and reproducible evidence bundle, see the
+[three-minute showcase](docs/showcase.md) and [implementation evidence](docs/resume-claims.md).
+
 | If you want to... | Go here |
 | --- | --- |
 | See the failure in two controlled implementations | [Run the vulnerable and corrected refund demo](#installation-and-runnable-demo) |
