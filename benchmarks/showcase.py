@@ -1,4 +1,4 @@
-"""Reproduce the six trusted, synthetic fixtures and retain reviewable evidence.
+"""Reproduce the trusted synthetic fixtures and retain reviewable evidence.
 
 Run from a checkout: python benchmarks/showcase.py --output results/showcase
 This runs repository-owned Python, not arbitrary downloaded scenarios.
@@ -67,11 +67,24 @@ def main(argv=None):
         "source_sha256": {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
         "results": [],
     }
-    for family in ("refund", "delegation", "session"):
+    for family in ("refund", "delegation", "session", "consumed_approval"):
         for variant, expected in (("scenario", "REVOCATION_ESCAPE"), ("safe", "CLOSED")):
             factory = runpy.run_path(str(ROOT / "examples" / family / (variant + ".py")))["build_scenario"]
             filename = f"{family}-{variant}.json"
+            domain_states = []
+            if family == "consumed_approval":
+                build = runpy.run_path(str(ROOT / "examples" / family / "scenario.py"))["build_scenario"]
+                factory = lambda: build(safe=variant == "safe", evidence=domain_states)
             report = run(factory, repeats=args.repeats, quiet=True, json_path=args.output / filename)
+            if domain_states:
+                experiments = [e for t in report["trials"] for e in t["experiments"]]
+                if len(experiments) != len(domain_states):
+                    raise ValueError("domain state cannot be joined unambiguously to experiments")
+                ledger = [{"run_id": e["run_id"], "experiment": e["experiment"],
+                           "observed_domain_state": state}
+                          for e, state in zip(experiments, domain_states)]
+                (args.output / f"{family}-{variant}-domain-events.json").write_text(
+                    json.dumps(ledger, indent=2) + "\n", encoding="utf-8")
             manifest["results"].append({
                 "fixture": f"{family}/{variant}", "expected": expected,
                 "observed": report["result"], "valid_trials": report["valid_trials"],

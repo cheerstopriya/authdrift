@@ -16,9 +16,12 @@ corrected one before relying on their authorization logic.
    Exit 0 means these controlled trials closed the tested boundary.
 4. Open the JSON: compare the positive and negative controls, then find confirmed
    invalidation, absence of the effect at confirmation, and the final effect read.
-5. Run `python benchmarks/showcase.py --output results/my-run` for all six fixtures.
+5. Run `python benchmarks/showcase.py --output results/my-run` for all eight fixtures.
    This writes raw reports, a readable summary, environment details and source hashes.
    Use a new output directory for each run; existing evidence is not overwritten.
+
+The [consumed-approval example](../examples/consumed_approval/README.md) also
+exports its observed domain ledger, so the earlier consumption can be inspected.
 
 ## What to explain while demonstrating
 
